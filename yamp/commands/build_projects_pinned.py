@@ -112,5 +112,6 @@ class BuildProjectsPinnedCommand(YampBaseCommand, BuildCommand):
                     dry_run=dry_run,
                 )
                 return sync_versions_handler.handle()
+            return 0
 
         return -1
