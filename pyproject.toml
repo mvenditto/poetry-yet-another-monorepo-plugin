@@ -1,0 +1,17 @@
+[project]
+name = "poetry-yet-another-monorepo-plugin"
+version = "0.1.0"
+description = " an opinionated Poetry plugin that helps managing a 'pinned' monorepo with centralized versioning."
+authors = [{name="mvenditto", email="mvenditto@gmail.com"}]
+requires-python = ">=3.9,<4.0"
+dependencies = [
+    "poetry (>=2.0,<3.0)",
+]
+entry-points = { "poetry.application.plugin" = { poetry-yet-another-monorepo-plugin = "yamp.plugin:YampPlugin"}}
+
+[tool.poetry]
+packages = [{ include = "yamp" }]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

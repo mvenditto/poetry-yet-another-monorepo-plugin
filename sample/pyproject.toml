@@ -1,0 +1,27 @@
+[project]
+name = "sample-monorepo"
+version = "0.0.2"
+description = ""
+authors = [
+    {name = "author",email = "author@gmail.com"}
+]
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[tool.poetry.requires-plugins]
+poetry-yet-another-monorepo-plugin = ">=0.1.0"
+
+[tool.poetry-yet-another-monorepo-plugin]
+projects-dir = "src"
+exclude-projects = [
+    "proj-c",
+]
+
+[tool.yamp.projects]
+proj-a = "src/proj_a"
+proj-b = "src/proj_b"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

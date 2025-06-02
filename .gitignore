@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+.pytest_cache
+.cache
+.poetry
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.zip
+
+# Virtual environments
+.venv
+
+.bin
+.tmp
+output
+output-*
+**/poetry.lock

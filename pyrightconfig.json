@@ -1,0 +1,21 @@
+{
+    // "venvPath": "src",
+    "enableTypeIgnoreComments": true,
+    "typeCheckingMode": "standard",
+    "verboseOutput": false, // Verbose output in `Output > Python Langauge Server`,
+    "reportMissingTypeStubs": "information",
+    "reportMissingImports": "error",
+    "stubPath": "typestubs",
+    "include": [
+        "src",
+        "tests",
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/.venv",
+        "**/venv",
+        "**/dist",
+        "**/build",
+        "**/.poetry"
+    ],
+}

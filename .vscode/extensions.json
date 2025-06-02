@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "ms-python.vscode-pylance",  // Pylance/Pyright (lang-server)
+        "ms-python.debugpy",         // Python debugger
+        "charliermarsh.ruff",        // Ruff (linter and formatter)
+        "njpwerner.autodocstring"    // AutoDocstring (docstring generation helper)
+    ]
+}

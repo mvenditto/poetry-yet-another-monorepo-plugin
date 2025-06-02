@@ -1,0 +1,23 @@
+{
+    "search.exclude": {
+    "**/dist": true,
+    "**/build": true,
+    },
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.formatOnType": false,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.unusedImports.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+        }
+    },
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.analysis.importFormat": "absolute",
+    "ruff.organizeImports": true,
+    "ruff.configuration": "${workspaceFolder}/ruff.toml",
+    "ruff.configurationPreference": "filesystemFirst",
+    "ruff.importStrategy": "fromEnvironment"
+}
