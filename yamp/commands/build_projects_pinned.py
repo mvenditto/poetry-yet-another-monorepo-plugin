@@ -66,34 +66,31 @@ class BuildProjectsPinnedCommand(YampBaseCommand, BuildCommand):
 
         for proj in targets:
             self.line("")
-            poetry = Factory().create_poetry(
-                cwd=proj.pyproject.path.parent,
-                io=self.io,
-            )
+            poetry = proj.poetry
+            self.monorepo.prepare_project(proj)
 
-            poetry.package.version = version
+            with proj.package_version_override(version):
+                env = EnvManager(poetry, io=self.io).get()
+                self.line(f"Target <c1>{proj.pyproject.path.parent}</c1>")
 
-            env = EnvManager(poetry, io=self.io).get()
-            self.line(f"Target <c1>{proj.pyproject.path.parent}</c1>")
-
-            build_handler = BuildHandler(
-                poetry=poetry,
-                env=env,  # type: ignore
-                io=self.io,
-            )
-
-            build_options = BuildOptions(
-                clean=self.option("clean"),
-                formats=self._prepare_formats(self.option("format")),  # type: ignore[arg-type]
-                output=self.option("output"),
-                config_settings=self._prepare_config_settings(
-                    local_version=self.option("local-version"),
-                    config_settings=self.option("config-settings"),
+                build_handler = BuildHandler(
+                    poetry=poetry,
+                    env=env,  # type: ignore
                     io=self.io,
-                ),
-            )
+                )
 
-            exit_code = build_handler.build(options=build_options)
+                build_options = BuildOptions(
+                    clean=self.option("clean"),
+                    formats=self._prepare_formats(self.option("format")),  # type: ignore[arg-type]
+                    output=self.option("output"),
+                    config_settings=self._prepare_config_settings(
+                        local_version=self.option("local-version"),
+                        config_settings=self.option("config-settings"),
+                        io=self.io,
+                    ),
+                )
+
+                exit_code = build_handler.build(options=build_options)
 
             self.line(f"Completed with <c1>exit-code</c1>: <c2>{exit_code}</c2>")
 

@@ -12,6 +12,10 @@ entry-points = { "poetry.application.plugin" = { poetry-yet-another-monorepo-plu
 [tool.poetry]
 packages = [{ include = "yamp" }]
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.0"
+pyfakefs = "^5.8.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

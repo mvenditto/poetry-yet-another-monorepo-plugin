@@ -12,15 +12,17 @@ dependencies = [
 [tool.poetry.requires-plugins]
 poetry-yet-another-monorepo-plugin = ">=0.1.0"
 
+[[tool.poetry.source]]
+name = "foo"
+url = "https://pypi.example.org/simple/"
+priority = "supplemental"
+
 [tool.poetry-yet-another-monorepo-plugin]
 projects-dir = "src"
+projects-inherit-repos = true
 exclude-projects = [
     "proj-c",
 ]
-
-[tool.yamp.projects]
-proj-a = "src/proj_a"
-proj-b = "src/proj_b"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -1,5 +1,4 @@
 import logging
-import sys
 from functools import cached_property
 
 from cleo.commands.command import Command
@@ -16,11 +15,11 @@ class YampBaseCommand(Command):
     def __init__(self, application: Application):
         super().__init__()
         self.root_application = application
-        self.logger = logging.getLogger("yamp")
+        self.logger = logging.getLogger("yamp.command")
 
     @cached_property
-    def monorepo(self):
-        return YampMonorepo(self.root_application)
+    def monorepo(self) -> YampMonorepo:
+        return YampMonorepo(self.root_application.poetry, io=self.io)
 
     def configure(self) -> None:
         self.options.append(
@@ -39,10 +38,11 @@ class YampBaseCommand(Command):
 
     def _setup_logging(self):
         logger = logging.getLogger("yamp")
-        handler = logging.StreamHandler(sys.stderr)
-        formatter = logging.Formatter("%(levelname)-8s - %(message)s")
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+
+        null_logger = logging.getLogger(str(None))
+        null_logger.handlers.clear()
+        null_logger.propagate = False
+        null_logger.addHandler(logging.NullHandler())
 
         level = logging.NOTSET
 

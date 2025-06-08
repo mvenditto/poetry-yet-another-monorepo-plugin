@@ -1,29 +1,29 @@
 import os
 import re
 from collections.abc import Mapping
+from dataclasses import asdict
 from logging import getLogger
 from pathlib import Path
 from typing import Any, Final
 
 from cleo.commands.command import Command
-from poetry.console.application import Application
+from cleo.io.io import IO
+from cleo.io.null_io import NullIO
+from poetry.poetry import Poetry
 from poetry.pyproject.toml import PyProjectTOML
 
 from yamp.config import YampConfig
 from yamp.project import YampProject
 from yamp.utils import get_project_key
 
-_DEFAULT_CONFIG: Final[dict[str, Any]] = {
-    "projects_dir": "projects",
-    "exclude_projects": [],
-}
+_DEFAULT_CONFIG: Final[dict[str, Any]] = asdict(YampConfig())
 
 
 class YampMonorepo:
-    def __init__(self, application: Application):
-        self.application = application
-        self.poetry = self.application.poetry
-        self.logger = getLogger("yamp")
+    def __init__(self, poetry: Poetry, io: IO | None = None):
+        self.poetry = poetry
+        self.logger = getLogger("yamp.monorepo")
+        self.io = io or NullIO()
         self.config = self._load_config()
         self.root_pyproject = self._load_root_pyproject()
         self.projects = self._load_projects()
@@ -63,7 +63,7 @@ class YampMonorepo:
         return version
 
     def _load_config(self):
-        pyproject_config = self.application.poetry.pyproject.data
+        pyproject_config = self.poetry.pyproject.data
 
         local_config: dict[str, Any] = pyproject_config.get("tool", {}).get(
             "poetry-yet-another-monorepo-plugin", {}
@@ -80,9 +80,7 @@ class YampMonorepo:
         return YampConfig(**final_config)
 
     def _load_root_pyproject(self) -> PyProjectTOML:
-        cwd = os.getcwd()
-        root_pyproject_path = Path(cwd, "pyproject.toml")
-        self.logger.info("Init monorepo: cwd=%s", cwd)
+        root_pyproject_path = self.poetry.pyproject_path
         self.logger.info("Init monorepo: root_pyproject=%s", root_pyproject_path)
 
         if not root_pyproject_path.exists():
@@ -90,8 +88,19 @@ class YampMonorepo:
 
         return PyProjectTOML(root_pyproject_path)
 
+    def prepare_project(self, project: YampProject):
+        """Applies configurations to the project's PyProject/Poetry instance.
+
+        Remarks:
+          Based on plugin configuration, apply changes to the project, e.g: inject root
+          repositories to the project repository pool.
+        """
+        if self.config.projects_inherit_repos:
+            self.logger.info("Repos inheritance enable, inject root repos to '%s'", project.name)
+            project.copy_repos_from(self.poetry.pool)
+
     def _load_projects(self) -> Mapping[str, YampProject]:
-        projects_dir = Path(os.getcwd(), self.config.projects_dir)
+        projects_dir = Path(self.root_pyproject.path.parent, self.config.projects_dir)
 
         self.logger.info("Loading projects: projects-dir=%s", projects_dir)
 
@@ -137,7 +146,8 @@ class YampMonorepo:
                 continue
 
             try:
-                projects[proj_name] = YampProject(pyproject_path)
+                pyproject = PyProjectTOML(pyproject_path)
+                projects[proj_name] = YampProject(pyproject, io=self.io, logger=self.logger)
                 self.logger.info("Found project: %s", pyproject_path)
             except:  # noqa
                 self.logger.exception("Failed to load: %s", pyproject_path)
