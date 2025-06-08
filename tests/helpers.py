@@ -1,8 +1,13 @@
 import textwrap
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
+from poetry.factory import Factory
+from poetry.poetry import Poetry
 from pyfakefs.fake_filesystem import FakeFilesystem
+
+from tests.defaults import DEFAULT_PROJ_VERSION
 
 TEST_REPOS_ROOT = "/test-cases"
 REPO_NAME = "test-repo-1"
@@ -12,7 +17,7 @@ PROJECT_NAMES = ("foo", "bar", "baz", "qux")
 PROJECT_PYPROJECT_TEMPLATE = textwrap.dedent("""\
 [project]
 name = "proj-{{PROJECT-NAME}}"
-version = "0.0.1"
+version = "{{PROJECT-VERSION}}"
 description = ""
 authors = [
     {name = "test",email = "test@test.com"}
@@ -71,7 +76,9 @@ build-backend = "poetry.core.masonry.api"
 
 
 def create_project_pyproject(name: str) -> str:
-    return PROJECT_PYPROJECT_TEMPLATE.replace("{{PROJECT-NAME}}", name)
+    return PROJECT_PYPROJECT_TEMPLATE.replace("{{PROJECT-NAME}}", name).replace(
+        "{{PROJECT-VERSION}}", DEFAULT_PROJ_VERSION
+    )
 
 
 def create_project_structure(fakefs: FakeFilesystem, projects_root: Path, name: str):
@@ -111,3 +118,11 @@ def fake_repos_fs(fs: FakeFilesystem):
     )
 
     return fs
+
+
+@pytest.fixture
+def poetry_factory(fake_repos_fs) -> Callable[[str], Poetry]:
+    def factory(name: str):
+        return Factory().create_poetry(cwd=Path(TEST_REPOS_ROOT, name))
+
+    return factory

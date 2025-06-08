@@ -1,23 +1,8 @@
 # ruff: noqa
 
-from collections.abc import Callable
-import os
-import pytest
-
-from pathlib import Path
-from tests.scenarios import fake_repos_fs, TEST_REPOS_ROOT
+from tests.helpers import fake_repos_fs, TEST_REPOS_ROOT, poetry_factory
 from yamp.monorepo import YampMonorepo
-from poetry.factory import Factory
-from poetry.poetry import Poetry
 from dataclasses import replace
-
-
-@pytest.fixture
-def poetry_factory(fake_repos_fs) -> Callable[[str], Poetry]:
-    def factory(name: str):
-        return Factory().create_poetry(cwd=Path(TEST_REPOS_ROOT, name))
-
-    return factory
 
 
 def test_monorepo_projects_are_loaded(poetry_factory):
