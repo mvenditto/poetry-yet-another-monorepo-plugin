@@ -9,7 +9,7 @@ from yamp.commands.set_projects_version import SetProjectsVersionHandler
 
 
 def test_cmd_set_projects_version(poetry_factory):
-    poetry = poetry_factory("test-repo-1")
+    poetry, _ = poetry_factory("test-repo-1")
 
     repo = YampMonorepo(poetry)
 
@@ -33,7 +33,7 @@ def test_cmd_set_projects_version(poetry_factory):
 
 
 def test_cmd_set_projects_version_dryrun(poetry_factory):
-    poetry = poetry_factory("test-repo-1")
+    poetry, _ = poetry_factory("test-repo-1")
 
     repo = YampMonorepo(poetry)
 

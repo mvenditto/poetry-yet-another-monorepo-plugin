@@ -121,8 +121,8 @@ def fake_repos_fs(fs: FakeFilesystem):
 
 
 @pytest.fixture
-def poetry_factory(fake_repos_fs) -> Callable[[str], Poetry]:
-    def factory(name: str):
-        return Factory().create_poetry(cwd=Path(TEST_REPOS_ROOT, name))
+def poetry_factory(fake_repos_fs) -> Callable[[str], tuple[Poetry, FakeFilesystem]]:
+    def factory(name: str) -> tuple[Poetry, FakeFilesystem]:
+        return Factory().create_poetry(cwd=Path(TEST_REPOS_ROOT, name)), fake_repos_fs
 
     return factory

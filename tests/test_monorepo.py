@@ -6,14 +6,14 @@ from dataclasses import replace
 
 
 def test_monorepo_projects_are_loaded(poetry_factory):
-    poetry = poetry_factory("test-repo-1")
+    poetry, _ = poetry_factory("test-repo-1")
     repo = YampMonorepo(poetry)
     for name in ("foo", "bar", "baz", "qux"):
         assert f"proj-{name}" in repo.projects
 
 
 def test_monorepo_excludes_are_honored(poetry_factory):
-    poetry = poetry_factory("test-repo-1")
+    poetry, _ = poetry_factory("test-repo-1")
     repo = YampMonorepo(poetry)
 
     for name in ("foo", "bar", "baz", "qux"):
@@ -35,7 +35,7 @@ def test_monorepo_excludes_are_honored(poetry_factory):
 
 
 def test_monorepo_repos_are_inherited(poetry_factory):
-    poetry = poetry_factory("test-repo-1")
+    poetry, _ = poetry_factory("test-repo-1")
 
     repo = YampMonorepo(poetry)
 
